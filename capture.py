@@ -48,7 +48,7 @@ def get_job_detail(externalPath):
             'Job URL': info.get('externalUrl'),
             'Job Description': description.strip(),
             'Posting Date': info.get('startDate'),
-            'Company Name': info.get('hiringOrganization',{}).get('name'),
+            'Company Name': data.get('hiringOrganization',{}).get('name'),
             'Scrape Time': datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S')
         }
     except Exception as e:
