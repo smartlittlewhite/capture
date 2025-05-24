@@ -1,0 +1,10 @@
+### 请求职业列表
+POST https://pultegroup.wd1.myworkdayjobs.com/wday/cxs/pultegroup/PGI/jobs
+Content-Type: application/json
+
+{
+}
+
+### 请求职业
+GET https://pultegroup.wd1.myworkdayjobs.com/wday/cxs/pultegroup/PGI/job/Houston-TX/Division-Assistant-Controller---Houston--TX_JR7201
+Content-Type: application/json
