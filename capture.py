@@ -13,6 +13,23 @@ headers = {
     'User-Agent': 'Mozilla/5.0',
     'Accept': 'application/json',
 }
+def get_jobs_number():
+    payload = {
+        "limit": 20,
+        "offset": 0,
+        "searchText": "",
+        "appliedFacets": {}
+    }
+    try:
+        resp = requests.post(JOB_LIST_API, json=payload, headers=headers)
+        if resp.status_code == 200:
+            return resp.json().get('total')
+        else:
+            print(f"职位数量请求失败：{resp.status_code}")
+            return -1
+    except Exception as e:
+        print(f"请求职位数量时出错: {e}")
+        return -1
 
 def get_job_list(offset, limit):
     payload = {
@@ -59,30 +76,36 @@ def main():
     offset = 0
     limit = 20
     all_jobs = []
+    job_num = get_jobs_number()
+    # print(f"job_num：{job_num}")
 
-    while True:
-        job_list = get_job_list(offset, limit)
-        if not job_list:
-            break
-
-        for job in job_list:
-            title = job.get('title')
-            externalPath = job.get('externalPath')
-            if not title or not externalPath:
-                continue
-
+    if job_num == 0:
+        print(f"没有职业")
+    elif job_num > 0:
+        while True:
             time.sleep(random.uniform(2, 4))
-            detail = get_job_detail(externalPath)
-            if not detail:
-                print(f"跳过职位 {title}，无法获取详情")
+            job_list = get_job_list(offset, limit)
+            if not job_list:
                 continue
 
-            all_jobs.append(detail)
-            print(f"爬取职位: {detail['Job Title']}")
+            for job in job_list:
+                title = job.get('title')
+                externalPath = job.get('externalPath')
+                if not title or not externalPath:
+                    continue
 
-        if len(job_list) < limit:
-            break
-        offset += limit
+                time.sleep(random.uniform(2, 4))
+                detail = get_job_detail(externalPath)
+                if not detail:
+                    print(f"跳过职位 {title}，无法获取详情")
+                    continue
+
+                all_jobs.append(detail)
+                print(f"爬取职位: {detail['Job Title']}")
+
+            offset += limit
+            if not offset>job_num:
+                break
 
     if all_jobs:
         df = pd.DataFrame(all_jobs)
